@@ -10,7 +10,9 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(cors());
 
-
+app.use('*', (request, response) => {
+  errorHandler('route not found', response);
+})
 
 app.get('/location', (request, response) => {
   const locationData = searchToLatLong(request.query.data);
@@ -21,9 +23,7 @@ app.get('/weather', (request, response) => {
   const weatherData = getWeather(request.query.data);
 
 
-app.use('*', (request, response)=>{
-  errorHandler('route not found', response);
-})
+
 
   response.send(weatherData);
 })
@@ -53,12 +53,12 @@ function Location(query, res) {
 
 function Weather(day) {
   this.forecast = day.summary;
-  this.time = new Date(day.time * 1000).toString().slice(0,15);
+  this.time = new Date(day.time * 1000).toString().slice(0, 15);
 }
 
-function errorHandler (err, res) {
+function errorHandler(err, res) {
   console.error(err);
-  if (res){
+  if (res) {
     res.status(500).send('sorry it all exploded');
   }
 }
